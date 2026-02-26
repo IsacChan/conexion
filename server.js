@@ -20,6 +20,8 @@ const db = mysql.createPool({
   multipleStatements: true
 });
 
+console.log("DATABASE:", process.env.MYSQLDATABASE);
+
 // 🔹 LOGIN
 app.post("/login", (req, res) => {
 
