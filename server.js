@@ -49,38 +49,31 @@ app.post("/login", (req, res) => {
   });
 });
 
-app.get("/crear-tablas", (req, res) => {
+app.post("/guardar-resultado", (req, res) => {
+
+  const { id_equipo, tiempo, puntaje } = req.body;
+
+  if (!id_equipo || !tiempo || !puntaje) {
+    return res.status(400).send("FALTAN DATOS");
+  }
 
   const sql = `
-  CREATE TABLE IF NOT EXISTS equipos (
-      id_equipo INT AUTO_INCREMENT PRIMARY KEY,
-      nombre_equipo VARCHAR(100) NOT NULL UNIQUE,
-      password_hash VARCHAR(255) NOT NULL,
-      fecha_registro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-  );
-
-  CREATE TABLE IF NOT EXISTS resultados (
-      id_resultado INT AUTO_INCREMENT PRIMARY KEY,
-      id_equipo INT NOT NULL UNIQUE,
-      puntaje_total INT NOT NULL,
-      tiempo_total_segundos INT NOT NULL,
-      fecha DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      CONSTRAINT fk_resultados_equipo
-          FOREIGN KEY (id_equipo)
-          REFERENCES equipos(id_equipo)
-          ON DELETE CASCADE
-  );
-
-  CREATE TABLE IF NOT EXISTS usuario (
-      id INT AUTO_INCREMENT PRIMARY KEY,
-      nombre VARCHAR(100) NOT NULL,
-      password VARCHAR(255) NOT NULL
-  );
+    INSERT INTO resultados (id_equipo, puntaje_total, tiempo_total_segundos)
+    VALUES (?, ?, ?)
   `;
 
-  db.query(sql, (err) => {
-    if (err) return res.send("Error creando tablas: " + err);
-    res.send("Tablas creadas correctamente");
+  db.query(sql, [id_equipo, puntaje, tiempo], (err) => {
+
+    if (err) {
+      if (err.code === "ER_DUP_ENTRY") {
+        return res.send("YA_REGISTRADO");
+      }
+
+      console.error(err);
+      return res.status(500).send("ERROR");
+    }
+
+    res.send("OK");
   });
 });
 
