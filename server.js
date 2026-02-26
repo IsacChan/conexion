@@ -20,14 +20,6 @@ const db = mysql.createPool({
   multipleStatements: true
 });
 
-db.connect(err => {
-  if (err) {
-    console.error("Error conexión MySQL:", err);
-  } else {
-    console.log("Conectado a MySQL");
-  }
-});
-
 // 🔹 LOGIN
 app.post("/login", (req, res) => {
 
