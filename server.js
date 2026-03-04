@@ -53,7 +53,11 @@ app.post("/guardar-resultado", (req, res) => {
 
   const { id_equipo, tiempo, puntaje } = req.body;
 
-  if (!id_equipo || !tiempo || !puntaje) {
+  if (
+    id_equipo == null ||
+    tiempo == null ||
+    puntaje == null
+  ) {
     return res.status(400).send("FALTAN DATOS");
   }
 
@@ -65,10 +69,6 @@ app.post("/guardar-resultado", (req, res) => {
   db.query(sql, [id_equipo, puntaje, tiempo], (err) => {
 
     if (err) {
-      if (err.code === "ER_DUP_ENTRY") {
-        return res.send("YA_REGISTRADO");
-      }
-
       console.error(err);
       return res.status(500).send("ERROR");
     }
