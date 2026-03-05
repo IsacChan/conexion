@@ -52,6 +52,7 @@ app.post("/login", (req, res) => {
 app.post("/guardar-resultado", (req, res) => {
 
   const { id_equipo, tiempo, puntaje } = req.body;
+   console.log("Datos recibidos:", req.body);
 
   if (
     id_equipo == null ||
